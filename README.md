@@ -12,3 +12,7 @@ I build software for aerospace (CanSat flight software and ground stations), ML 
 ![ONNX Runtime](https://img.shields.io/badge/ONNX_Runtime-0B1D3A?style=for-the-badge&logo=onnx&logoColor=white)
 ![TensorRT](https://img.shields.io/badge/TensorRT-0B1D3A?style=for-the-badge&logo=nvidia&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-0B1D3A?style=for-the-badge&logo=linux&logoColor=white)
+
+## Contribution graph
+
+![satellite contribution graph](https://raw.githubusercontent.com/shloksatpathy/shloksatpathy/output/satellite-graph.svg)
