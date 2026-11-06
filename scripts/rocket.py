@@ -129,7 +129,7 @@ for _ in range(70):
 stars.append("</g>")
 out += stars
 
-# World: ground, pad, tower and smoke. It scrolls down once the camera tracks the rocket.
+# World: ground, pad and tower. It scrolls down once the camera tracks the rocket.
 world_shift = series(lambda t, a, v, q: a - rise(a), "0,{:.2f}")
 out += [f"<g>{anim_transform('translate', world_shift)}"]
 
@@ -148,29 +148,11 @@ for k in range(0, 230, 14):
 out.append(f'<path d="M{tx},{GROUND_Y - 190} L{CX - 13},{GROUND_Y - 190}"/>')
 out.append("</g>")
 
-# Flame glow on the ground and smoke billowing out of the flame trench
+# Flame glow on the ground
 out.append(
     f'<ellipse cx="{CX}" cy="{GROUND_Y}" rx="160" ry="30" fill="url(#glow)" opacity="0">'
     f'{anim("opacity", series(lambda t, a, v, q: stage1_on(t)))}</ellipse>'
 )
-smoke = [f'<g opacity="0">{anim("opacity", series(lambda t, a, v, q: ramp(t, IGNITION + 0.1, FULL_THRUST) * (1 - ramp(t, 6.5, 8))))}']
-for i in range(18):
-    side = -1 if i % 2 else 1
-    dx = side * random.uniform(60, 260)
-    r = random.uniform(22, 46)
-    d = random.uniform(1.4, 2.4)
-    begin = random.uniform(0, d)
-    shade = random.choice(["#E6ECF5", "#C9D6E8", "#F2F5FA"])
-    smoke.append(
-        f'<circle cx="{CX}" cy="{GROUND_Y - 6}" r="4" fill="{shade}">'
-        f'<animate attributeName="cx" values="{CX};{CX + dx:.0f}" dur="{d:.2f}s" begin="-{begin:.2f}s" repeatCount="indefinite"/>'
-        f'<animate attributeName="cy" values="{GROUND_Y - 6};{GROUND_Y - random.uniform(20, 60):.0f}" dur="{d:.2f}s" begin="-{begin:.2f}s" repeatCount="indefinite"/>'
-        f'<animate attributeName="r" values="6;{r:.0f}" dur="{d:.2f}s" begin="-{begin:.2f}s" repeatCount="indefinite"/>'
-        f'<animate attributeName="opacity" values="0.95;0" dur="{d:.2f}s" begin="-{begin:.2f}s" repeatCount="indefinite"/>'
-        "</circle>"
-    )
-smoke.append("</g>")
-out += smoke
 out.append("</g>")
 
 # Air rushing past: streak strength follows dynamic pressure q = rho * v^2.
