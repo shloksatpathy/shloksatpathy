@@ -70,18 +70,6 @@ def anim_transform(kind, values, additive=False):
     )
 
 
-def lerp_color(c1, c2, u):
-    a = [int(c1[i:i + 2], 16) for i in (1, 3, 5)]
-    b = [int(c2[i:i + 2], 16) for i in (1, 3, 5)]
-    return "#" + "".join(f"{round(x + (y - x) * u):02X}" for x, y in zip(a, b))
-
-
-def sky(alt):
-    if alt < 500:
-        return lerp_color("#5FA8E8", "#1E4E8C", clamp((alt - 150) / 350))
-    return lerp_color("#1E4E8C", "#0B1D3A", clamp((alt - 500) / 450))
-
-
 def rise(alt):
     return min(alt, TRACK_RISE)
 
@@ -132,27 +120,18 @@ out = [
     '<stop offset="1" stop-color="#2A2E36"/></linearGradient>',
     "</defs>",
     '<g clip-path="url(#frame)">',
-    f'<rect width="{W}" height="{H}" fill="{sky(0)}">{anim("fill", series(lambda t, a, v, q: sky(a), "{}"))}</rect>',
+    f'<rect width="{W}" height="{H}" fill="#0B1D3A"/>',
 ]
 
-# Stars fade in above the atmosphere.
-stars = [f'<g opacity="0">{anim("opacity", series(lambda t, a, v, q: clamp((a - 600) / 350)))}']
+stars = ["<g>"]
 for _ in range(70):
     stars.append(f'<circle cx="{random.uniform(0, W):.1f}" cy="{random.uniform(0, H):.1f}" r="{random.choice([0.6, 0.9, 1.2])}" fill="#FFFFFF"/>')
 stars.append("</g>")
 out += stars
 
-# World: ground, pad, tower, smoke and clouds. It scrolls down once the camera tracks the rocket.
+# World: ground, pad, tower and smoke. It scrolls down once the camera tracks the rocket.
 world_shift = series(lambda t, a, v, q: a - rise(a), "0,{:.2f}")
 out += [f"<g>{anim_transform('translate', world_shift)}"]
-
-for h, x, s in [(150, 120, 1.2), (230, 640, 1.0), (330, 230, 1.4), (450, 590, 1.1), (580, 160, 0.9)]:
-    y = GROUND_Y - h
-    out.append(
-        f'<g transform="translate({x} {y}) scale({s})" fill="#FFFFFF" opacity="0.85">'
-        '<ellipse cx="0" cy="0" rx="70" ry="16"/><ellipse cx="-30" cy="-8" rx="34" ry="16"/>'
-        '<ellipse cx="25" cy="-12" rx="40" ry="20"/><ellipse cx="60" cy="-2" rx="30" ry="12"/></g>'
-    )
 
 out += [
     f'<rect x="0" y="{GROUND_Y}" width="{W}" height="200" fill="#2B3A4A"/>',
