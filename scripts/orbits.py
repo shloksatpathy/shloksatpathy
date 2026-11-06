@@ -30,7 +30,13 @@ PLANETS = [
 ]
 SOLAR_VIEW = math.radians(25)
 EARTH_T = 8
-HOLD, ZOOM_END, FADE = 4, 7, 1  # seconds: solar view, end of zoom, crossfade length
+HOLD, ZOOM_END, FADE = 3, 8, 1.5  # seconds: solar view, end of zoom, satellite scene fade-in
+# Everything but Earth fades out over the second half of the zoom, so only Earth is left when it arrives.
+FADE_OUT = (
+    f'<animate attributeName="opacity" from="1" to="0" begin="{(HOLD + ZOOM_END) / 2}s" '
+    f'dur="{(ZOOM_END - HOLD) / 2}s" fill="freeze"/>'
+)
+FADE_IN = f'<animate attributeName="opacity" from="0" to="1" begin="{ZOOM_END}s" dur="{FADE}s" fill="freeze"/>'
 ZOOM = EARTH_R / 4  # makes the intro Earth match the satellite scene Earth
 STEP = 0.05
 
@@ -143,17 +149,18 @@ for t, (ex, ey, _, _) in zip(times, earth_track):
     centers.append(f"{-ex * u:.3f},{-ey * u:.3f}")
 
 out += [
-    f'<g><animate attributeName="opacity" from="1" to="0" begin="{ZOOM_END}s" dur="{FADE}s" fill="freeze"/>',
     f'<g transform="translate({CX} {CY})"><g>',
     f'<animateTransform attributeName="transform" type="scale" values="{";".join(scales)}" dur="{ZOOM_END}s" fill="freeze"/>',
     "<g>",
     f'<animateTransform attributeName="transform" type="translate" values="{";".join(centers)}" dur="{ZOOM_END}s" fill="freeze"/>',
+    f"<g>{FADE_OUT}",
 ]
 for _, a, _, _, _ in PLANETS:
     out.append(
         f'<ellipse rx="{a}" ry="{a * math.sin(SOLAR_VIEW):.2f}" fill="none" stroke="#2E6DB4" '
         'stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>'
     )
+out.append("</g>")
 
 
 def planet_body(name, r, color):
@@ -165,7 +172,7 @@ def planet_body(name, r, color):
             f'<ellipse rx="{r * 2.1}" ry="{r * 2.1 * math.sin(SOLAR_VIEW):.2f}" fill="none" '
             f'stroke="{color}" stroke-width="1.2"/>'
         )
-    return body
+    return f"<g>{FADE_OUT}{body}</g>"
 
 
 planet_layers = {True: [], False: []}
@@ -181,13 +188,12 @@ for name, a, r, color, start in PLANETS:
         )
 
 out += planet_layers[True]
-out += ['<circle r="34" fill="url(#sun)"/>', '<circle r="16" fill="#FFE08A"/>']
+out += [f'<g>{FADE_OUT}<circle r="34" fill="url(#sun)"/><circle r="16" fill="#FFE08A"/></g>']
 out += planet_layers[False]
-out += ["</g></g></g></g>"]
+out += ["</g></g></g>"]
 
 # ---------- Satellite scene: 3D orbits around a spinning Earth ----------
-
-out += [f'<g opacity="0"><animate attributeName="opacity" from="0" to="1" begin="{ZOOM_END}s" dur="{FADE}s" fill="freeze"/>']
+# Its Earth matches the zoomed-in intro Earth exactly, so it appears at once; everything else fades in.
 
 back_layer, front_layer, legend = [], [], []
 for idx, (name, a, e, inc, raan, argp, color) in enumerate(ORBITS):
@@ -247,10 +253,15 @@ for f in range(SPIN_FRAMES):
         pieces += [path(line) for back, line in runs(meridian, closed=False) if not back]
     frames.append(" ".join(pieces))
 
+out += [f'<g opacity="0">{FADE_IN}']
 out += back_layer
 out += [
+    "</g>",
+    f'<g opacity="0"><set attributeName="opacity" to="1" begin="{ZOOM_END}s"/>',
     f'<circle cx="{CX}" cy="{CY}" r="{EARTH_R + 4}" fill="#4FA3E0" opacity="0.15"/>',
     f'<circle cx="{CX}" cy="{CY}" r="{EARTH_R}" fill="url(#earth)"/>',
+    "</g>",
+    f'<g opacity="0">{FADE_IN}',
     f'<g fill="none" stroke="#9BD4FF" stroke-opacity="0.3" stroke-width="0.8">',
     f'<path d="{" ".join(grid)}"/>',
     f'<path d="{frames[0]}"><animate attributeName="d" values="{";".join(frames)}" calcMode="discrete" '
