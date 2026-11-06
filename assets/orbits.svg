@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="800" height="440" viewBox="0 0 800 440">
-<defs><radialGradient id="earth" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#6FC3FF"/><stop offset="0.6" stop-color="#2E6DB4"/><stop offset="1" stop-color="#0F3566"/></radialGradient></defs>
+<defs><radialGradient id="earth" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#6FC3FF"/><stop offset="0.6" stop-color="#2E6DB4"/><stop offset="1" stop-color="#0F3566"/></radialGradient><radialGradient id="sun"><stop offset="0" stop-color="#FFF4C2"/><stop offset="0.5" stop-color="#FFC94D"/><stop offset="1" stop-color="#FF9A1F" stop-opacity="0"/></radialGradient></defs>
 <rect width="800" height="440" rx="8" fill="#0B1D3A"/>
 <circle cx="259.1" cy="66.4" r="1.1" fill="#FFFFFF"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.2s" repeatCount="indefinite"/></circle>
 <circle cx="657.0" cy="41.4" r="1.1" fill="#FFFFFF"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.2s" repeatCount="indefinite"/></circle>
@@ -91,6 +91,41 @@
 <circle cx="443.2" cy="193.8" r="0.6" fill="#FFFFFF"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="3.5s" repeatCount="indefinite"/></circle>
 <circle cx="413.9" cy="130.0" r="0.6" fill="#FFFFFF"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.5s" repeatCount="indefinite"/></circle>
 <circle cx="734.8" cy="100.6" r="0.6" fill="#FFFFFF"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.3s" repeatCount="indefinite"/></circle>
+<g><animate attributeName="opacity" from="1" to="0" begin="7s" dur="1s" fill="freeze"/>
+<g transform="translate(400 220)"><g>
+<animateTransform attributeName="transform" type="scale" values="1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0000;1.0017;1.0068;1.0152;1.0268;1.0418;1.0600;1.0815;1.1063;1.1347;1.1665;1.2021;1.2414;1.2847;1.3322;1.3839;1.4402;1.5011;1.5670;1.6380;1.7145;1.7966;1.8846;1.9787;2.0792;2.1863;2.3002;2.4212;2.5495;2.6852;2.8284;2.9793;3.1379;3.3041;3.4779;3.6592;3.8477;4.0431;4.2450;4.4529;4.6661;4.8839;5.1053;5.3294;5.5550;5.7807;6.0052;6.2270;6.4442;6.6552;6.8580;7.0506;7.2311;7.3974;7.5475;7.6793;7.7908;7.8803;7.9460;7.9863;8.0000" dur="7s" fill="freeze"/>
+<g>
+<animateTransform attributeName="transform" type="translate" values="-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;-0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.000,-0.000;0.044,-0.070;0.185,-0.269;0.434,-0.581;0.802,-0.990;1.297,-1.479;1.927,-2.031;2.697,-2.628;3.611,-3.251;4.671,-3.885;5.877,-4.509;7.228,-5.108;8.722,-5.664;10.355,-6.161;12.121,-6.581;14.014,-6.911;16.024,-7.134;18.144,-7.239;20.361,-7.210;22.665,-7.038;25.043,-6.710;27.480,-6.218;29.964,-5.553;32.478,-4.709;35.007,-3.679;37.535,-2.460;40.046,-1.049;42.521,0.557;44.946,2.356;47.302,4.346;49.572,6.526;51.741,8.891;53.791,11.434;55.707,14.148;57.472,17.024;59.074,20.053;60.496,23.222;61.727,26.520;62.753,29.932;63.564,33.443;64.150,37.037;64.502,40.697;64.611,44.406;64.473,48.145;64.083,51.893;63.436,55.632;62.533,59.341;61.371,62.999;59.954,66.586;58.284,70.079;56.367,73.459;54.208,76.703;51.817,79.792;49.204,82.704;46.380,85.421;43.359,87.923;40.155,90.191;36.787,92.208;33.272,93.957;29.630,95.423;25.882,96.593" dur="7s" fill="freeze"/>
+<circle r="34" fill="url(#sun)"/>
+<circle r="16" fill="#FFE08A"/>
+<circle r="45" fill="none" stroke="#2E6DB4" stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>
+<g transform="rotate(200)"><animateTransform attributeName="transform" type="rotate" from="200" to="1243.498" dur="7s" fill="freeze"/>
+<circle cx="45" r="2" fill="#B8B0A8"/>
+</g>
+<circle r="70" fill="none" stroke="#2E6DB4" stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>
+<g transform="rotate(80)"><animateTransform attributeName="transform" type="rotate" from="80" to="617.853" dur="7s" fill="freeze"/>
+<circle cx="70" r="3.2" fill="#E8C78A"/>
+</g>
+<circle r="100" fill="none" stroke="#2E6DB4" stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>
+<g transform="rotate(300)"><animateTransform attributeName="transform" type="rotate" from="300" to="615.000" dur="7s" fill="freeze"/>
+<circle cx="100" r="4.50" fill="#4FA3E0" opacity="0.15"/>
+<circle cx="100" r="4" fill="url(#earth)"/>
+</g>
+<circle r="135" fill="none" stroke="#2E6DB4" stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>
+<g transform="rotate(20)"><animateTransform attributeName="transform" type="rotate" from="20" to="220.821" dur="7s" fill="freeze"/>
+<circle cx="135" r="2.6" fill="#D9714E"/>
+</g>
+<circle r="175" fill="none" stroke="#2E6DB4" stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>
+<g transform="rotate(140)"><animateTransform attributeName="transform" type="rotate" from="140" to="276.067" dur="7s" fill="freeze"/>
+<circle cx="175" r="9" fill="#D8B48A"/>
+</g>
+<circle r="210" fill="none" stroke="#2E6DB4" stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>
+<g transform="rotate(250)"><animateTransform attributeName="transform" type="rotate" from="250" to="353.510" dur="7s" fill="freeze"/>
+<circle cx="210" r="7.5" fill="#E6D29C"/>
+<ellipse cx="210" rx="14.25" ry="3.75" fill="none" stroke="#E6D29C" stroke-width="1.2"/>
+</g>
+</g></g></g></g>
+<g opacity="0"><animate attributeName="opacity" from="0" to="1" begin="7s" dur="1s" fill="freeze"/>
 <circle cx="400" cy="220" r="36" fill="#4FA3E0" opacity="0.15"/>
 <circle cx="400" cy="220" r="32" fill="url(#earth)"/>
 <g transform="translate(400 220) rotate(0)">
@@ -134,4 +169,5 @@
 </g>
 <text x="540" y="370" fill="#C9D6E8" font-family="monospace" font-size="11">GEO · T=22.2s</text>
 <text x="20" y="424" fill="#9BD4FF" font-family="monospace" font-size="11">Kepler's laws: Earth at one focus · faster near perigee · T² ∝ a³</text>
+</g>
 </svg>
