@@ -2,6 +2,8 @@
 
 I build software for rockets and small satellites. I write flight software and firmware for CanSat missions (attitude control, parafoil recovery and navigation, telemetry and failsafes) and ground station software for launch vehicle and CanSat programs.
 
+![satellites orbiting Earth](assets/orbits.svg)
+
 ## Tech stack
 
 ![Python](https://img.shields.io/badge/Python-0B1D3A?style=for-the-badge&logo=python&logoColor=white)
