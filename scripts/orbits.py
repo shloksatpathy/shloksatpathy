@@ -4,14 +4,19 @@ import random
 W, H = 800, 440
 CX, CY = 400, 220
 SAMPLES = 180
-BASE_A, BASE_T = 50, 3  # period of the smallest satellite orbit; others follow T^2 ∝ a^3
+EARTH_R = 32
+VIEW = math.radians(20)  # camera elevation above Earth's equator
+FOCAL = 700  # perspective distance for the satellite scene
+SPIN = 16  # seconds per Earth rotation
+SPIN_FRAMES = 24  # frames per 45° of rotation (the meridian grid repeats every 45°)
+BASE_A, BASE_T = 55, 3  # period of the smallest satellite orbit; others follow T^2 ∝ a^3
 
-# Satellite scene: name, semi-major axis, eccentricity, rotation (deg), color, label position
+# Satellite scene: name, a, e, inclination, RAAN, argument of perigee (deg), color
 ORBITS = [
-    ("LEO", 50, 0.0, 0, "#9BD4FF", (36, -40)),
-    ("MEO", 110, 0.15, 60, "#4FA3E0", (60, -110)),
-    ("Molniya e=0.7", 150, 0.7, -20, "#FFD27F", (-300, -60)),
-    ("GEO", 190, 0.0, 0, "#C9D6E8", (140, 150)),
+    ("LEO", 55, 0.0, 51.6, 0, 0, "#9BD4FF"),
+    ("MEO", 110, 0.15, 55, 120, 40, "#4FA3E0"),
+    ("Molniya", 120, 0.7, 63.4, 200, 270, "#FFD27F"),
+    ("GEO", 190, 0.0, 0, 0, 0, "#C9D6E8"),
 ]
 
 # Solar system intro: name, orbit radius, planet radius, color, start angle (deg)
@@ -23,10 +28,32 @@ PLANETS = [
     ("Jupiter", 175, 9, "#D8B48A", 140),
     ("Saturn", 210, 7.5, "#E6D29C", 250),
 ]
-EARTH_A, EARTH_R, EARTH_T, EARTH_START = 100, 4, 8, 300
+SOLAR_VIEW = math.radians(25)
+EARTH_T = 8
 HOLD, ZOOM_END, FADE = 4, 7, 1  # seconds: solar view, end of zoom, crossfade length
-ZOOM = 32 / EARTH_R  # makes the intro Earth match the satellite scene Earth
+ZOOM = EARTH_R / 4  # makes the intro Earth match the satellite scene Earth
 STEP = 0.05
+
+
+def rot_x(p, deg):
+    x, y, z = p
+    c, s = math.cos(math.radians(deg)), math.sin(math.radians(deg))
+    return x, y * c - z * s, y * s + z * c
+
+
+def rot_z(p, deg):
+    x, y, z = p
+    c, s = math.cos(math.radians(deg)), math.sin(math.radians(deg))
+    return x * c - y * s, x * s + y * c, z
+
+
+def project(p, elev, focal):
+    # x right, y away from the camera, z up. Returns screen x, screen y, depth, perspective scale.
+    x, y, z = p
+    depth = y * math.cos(elev) - z * math.sin(elev)
+    up = y * math.sin(elev) + z * math.cos(elev)
+    k = focal / (focal + depth)
+    return x * k, -up * k, depth, k
 
 
 def kepler_positions(a, e):
@@ -37,14 +64,38 @@ def kepler_positions(a, e):
         E = m
         for _ in range(20):
             E -= (E - e * math.sin(E) - m) / (1 - e * math.cos(E))
-        points.append((a * (math.cos(E) - e), b * math.sin(E)))
-    points.append(points[0])
+        points.append((a * (math.cos(E) - e), b * math.sin(E), 0))
     return points
 
 
-def earth_at(t):
-    angle = math.radians(EARTH_START + 360 * t / EARTH_T)
-    return EARTH_A * math.cos(angle), EARTH_A * math.sin(angle)
+def runs(points, closed):
+    # Splits projected points into polylines that are behind (depth > 0) or in front of the centre.
+    result = []
+    n = len(points) if closed else len(points) - 1
+    for i in range(n):
+        p, q = points[i], points[(i + 1) % len(points)]
+        back = p[2] + q[2] > 0
+        if result and result[-1][0] == back and result[-1][1][-1] is p:
+            result[-1][1].append(q)
+        else:
+            result.append((back, [p, q]))
+    return result
+
+
+def path(points):
+    return "M" + " L".join(f"{CX + p[0]:.1f},{CY + p[1]:.1f}" for p in points)
+
+
+def discrete(flags):
+    return ";".join("1" if f else "0" for f in flags)
+
+
+def satellite(color):
+    return (
+        f'<rect x="-9" y="-2" width="6" height="4" fill="{color}"/>'
+        f'<rect x="3" y="-2" width="6" height="4" fill="{color}"/>'
+        '<rect x="-3" y="-3" width="6" height="6" rx="1" fill="#FFFFFF"/>'
+    )
 
 
 out = [
@@ -69,13 +120,25 @@ for _ in range(90):
         f'<animate attributeName="opacity" values="0.2;0.9;0.2" dur="{dur:.1f}s" repeatCount="indefinite"/></circle>'
     )
 
-# Solar system intro. The camera tracks Earth and zooms in on it.
+# ---------- Solar system intro: tilted view, camera tracks and zooms into Earth ----------
+
+times = [k * STEP for k in range(int(ZOOM_END / STEP) + 1)]
+
+
+def planet_track(a, start):
+    period = EARTH_T * (a / 100) ** 1.5
+    track = []
+    for t in times:
+        angle = math.radians(start + 360 * t / period)
+        track.append(project((a * math.cos(angle), a * math.sin(angle), 0), SOLAR_VIEW, 1e9))
+    return track
+
+
+earth_track = planet_track(100, 300)
 scales, centers = [], []
-for k in range(int(ZOOM_END / STEP) + 1):
-    t = k * STEP
+for t, (ex, ey, _, _) in zip(times, earth_track):
     u = min(max((t - HOLD) / (ZOOM_END - HOLD), 0), 1)
     u = u * u * (3 - 2 * u)
-    ex, ey = earth_at(t)
     scales.append(f"{ZOOM ** u:.4f}")
     centers.append(f"{-ex * u:.3f},{-ey * u:.3f}")
 
@@ -85,48 +148,117 @@ out += [
     f'<animateTransform attributeName="transform" type="scale" values="{";".join(scales)}" dur="{ZOOM_END}s" fill="freeze"/>',
     "<g>",
     f'<animateTransform attributeName="transform" type="translate" values="{";".join(centers)}" dur="{ZOOM_END}s" fill="freeze"/>',
-    '<circle r="34" fill="url(#sun)"/>',
-    '<circle r="16" fill="#FFE08A"/>',
 ]
-for name, a, r, color, start in PLANETS:
-    period = EARTH_T * (a / EARTH_A) ** 1.5
-    out.append(f'<circle r="{a}" fill="none" stroke="#2E6DB4" stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>')
+for _, a, _, _, _ in PLANETS:
     out.append(
-        f'<g transform="rotate({start})"><animateTransform attributeName="transform" type="rotate" '
-        f'from="{start}" to="{start + 360 * ZOOM_END / period:.3f}" dur="{ZOOM_END}s" fill="freeze"/>'
+        f'<ellipse rx="{a}" ry="{a * math.sin(SOLAR_VIEW):.2f}" fill="none" stroke="#2E6DB4" '
+        'stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>'
     )
+
+
+def planet_body(name, r, color):
     if name == "Earth":
-        out.append(f'<circle cx="{a}" r="{r * 36 / 32:.2f}" fill="#4FA3E0" opacity="0.15"/>')
-        out.append(f'<circle cx="{a}" r="{r}" fill="url(#earth)"/>')
-    else:
-        out.append(f'<circle cx="{a}" r="{r}" fill="{color}"/>')
+        return f'<circle r="{r * 36 / 32:.2f}" fill="#4FA3E0" opacity="0.15"/><circle r="{r}" fill="url(#earth)"/>'
+    body = f'<circle r="{r}" fill="{color}"/>'
     if name == "Saturn":
-        out.append(f'<ellipse cx="{a}" rx="{r * 1.9}" ry="{r * 0.5}" fill="none" stroke="{color}" stroke-width="1.2"/>')
-    out.append("</g>")
+        body += (
+            f'<ellipse rx="{r * 2.1}" ry="{r * 2.1 * math.sin(SOLAR_VIEW):.2f}" fill="none" '
+            f'stroke="{color}" stroke-width="1.2"/>'
+        )
+    return body
+
+
+planet_layers = {True: [], False: []}
+for name, a, r, color, start in PLANETS:
+    track = earth_track if name == "Earth" else planet_track(a, start)
+    motion = ";".join(f"{p[0]:.2f},{p[1]:.2f}" for p in track)
+    for back in (True, False):
+        flags = [(p[2] > 0) == back for p in track]
+        planet_layers[back].append(
+            f'<g><animateMotion values="{motion}" dur="{ZOOM_END}s" fill="freeze"/>'
+            f'<animate attributeName="opacity" values="{discrete(flags)}" calcMode="discrete" dur="{ZOOM_END}s" fill="freeze"/>'
+            f"{planet_body(name, r, color)}</g>"
+        )
+
+out += planet_layers[True]
+out += ['<circle r="34" fill="url(#sun)"/>', '<circle r="16" fill="#FFE08A"/>']
+out += planet_layers[False]
 out += ["</g></g></g></g>"]
 
-# Satellite scene, faded in once the camera reaches Earth.
-out += [
-    f'<g opacity="0"><animate attributeName="opacity" from="0" to="1" begin="{ZOOM_END}s" dur="{FADE}s" fill="freeze"/>',
-    f'<circle cx="{CX}" cy="{CY}" r="36" fill="#4FA3E0" opacity="0.15"/>',
-    f'<circle cx="{CX}" cy="{CY}" r="32" fill="url(#earth)"/>',
-]
-for name, a, e, rot, color, (lx, ly) in ORBITS:
-    b = a * math.sqrt(1 - e * e)
+# ---------- Satellite scene: 3D orbits around a spinning Earth ----------
+
+out += [f'<g opacity="0"><animate attributeName="opacity" from="0" to="1" begin="{ZOOM_END}s" dur="{FADE}s" fill="freeze"/>']
+
+back_layer, front_layer, legend = [], [], []
+for idx, (name, a, e, inc, raan, argp, color) in enumerate(ORBITS):
     period = BASE_T * (a / BASE_A) ** 1.5
-    values = ";".join(f"{x:.2f},{y:.2f}" for x, y in kepler_positions(a, e))
-    out += [
-        f'<g transform="translate({CX} {CY}) rotate({rot})">',
-        f'<ellipse cx="{-a * e:.2f}" cy="0" rx="{a}" ry="{b:.2f}" fill="none" stroke="{color}" stroke-opacity="0.35" stroke-dasharray="3 4"/>',
-        "<g>",
-        f'<animateMotion values="{values}" dur="{period:.2f}s" repeatCount="indefinite"/>',
-        f'<rect x="-9" y="-2" width="6" height="4" fill="{color}"/>',
-        f'<rect x="3" y="-2" width="6" height="4" fill="{color}"/>',
-        '<rect x="-3" y="-3" width="6" height="6" rx="1" fill="#FFFFFF"/>',
-        "</g>",
-        "</g>",
-        f'<text x="{CX + lx}" y="{CY + ly}" fill="{color}" font-family="monospace" font-size="11">{name} · T={period:.1f}s</text>',
-    ]
+    points = [rot_z(rot_x(rot_z(p, argp), inc), raan) for p in kepler_positions(a, e)]
+    proj = [project(p, VIEW, FOCAL) for p in points]
+
+    for back, line in runs(proj, closed=True):
+        (back_layer if back else front_layer).append(
+            f'<path d="{path(line)}" fill="none" stroke="{color}" stroke-opacity="{0.2 if back else 0.6}" stroke-dasharray="3 4"/>'
+        )
+
+    loop = proj + [proj[0]]
+    motion = ";".join(f"{CX + p[0]:.2f},{CY + p[1]:.2f}" for p in loop)
+    scale = ";".join(f"{p[3]:.3f}" for p in loop)
+    for back in (True, False):
+        flags = [(p[2] > 0) == back for p in proj]
+        (back_layer if back else front_layer).append(
+            f'<g><animateMotion values="{motion}" dur="{period:.2f}s" repeatCount="indefinite"/>'
+            f'<animate attributeName="opacity" values="{discrete(flags)}" calcMode="discrete" dur="{period:.2f}s" repeatCount="indefinite"/>'
+            f'<g><animateTransform attributeName="transform" type="scale" values="{scale}" dur="{period:.2f}s" repeatCount="indefinite"/>'
+            f"{satellite(color)}</g></g>"
+        )
+
+    y = 26 + idx * 18
+    legend.append(
+        f'<rect x="20" y="{y - 8}" width="10" height="4" fill="{color}"/>'
+        f'<text x="38" y="{y}" fill="{color}" font-family="monospace" font-size="11">'
+        f"{name:<8} i={inc:g}° e={e:g} T={period:.1f}s</text>"
+    )
+
+# Earth: parallels are fixed, meridians turn with the spin.
+grid = []
+for lat in (-60, -30, 0, 30, 60):
+    ring = []
+    for k in range(73):
+        lon = math.radians(k * 5)
+        la = math.radians(lat)
+        ring.append(project(
+            (EARTH_R * math.cos(la) * math.cos(lon), EARTH_R * math.cos(la) * math.sin(lon), EARTH_R * math.sin(la)),
+            VIEW, FOCAL,
+        ))
+    grid += [path(line) for back, line in runs(ring, closed=False) if not back]
+
+frames = []
+for f in range(SPIN_FRAMES):
+    pieces = []
+    for m in range(8):
+        lon = math.radians(m * 45 + 45 * f / SPIN_FRAMES)
+        meridian = []
+        for k in range(13):
+            la = math.radians(-90 + k * 15)
+            meridian.append(project(
+                (EARTH_R * math.cos(la) * math.cos(lon), EARTH_R * math.cos(la) * math.sin(lon), EARTH_R * math.sin(la)),
+                VIEW, FOCAL,
+            ))
+        pieces += [path(line) for back, line in runs(meridian, closed=False) if not back]
+    frames.append(" ".join(pieces))
+
+out += back_layer
+out += [
+    f'<circle cx="{CX}" cy="{CY}" r="{EARTH_R + 4}" fill="#4FA3E0" opacity="0.15"/>',
+    f'<circle cx="{CX}" cy="{CY}" r="{EARTH_R}" fill="url(#earth)"/>',
+    f'<g fill="none" stroke="#9BD4FF" stroke-opacity="0.3" stroke-width="0.8">',
+    f'<path d="{" ".join(grid)}"/>',
+    f'<path d="{frames[0]}"><animate attributeName="d" values="{";".join(frames)}" calcMode="discrete" '
+    f'dur="{SPIN / 8}s" repeatCount="indefinite"/></path>',
+    "</g>",
+]
+out += front_layer
+out += legend
 out += [
     f'<text x="20" y="{H - 16}" fill="#9BD4FF" font-family="monospace" font-size="11">'
     "Kepler's laws: Earth at one focus · faster near perigee · T² ∝ a³</text>",
