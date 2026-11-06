@@ -54,7 +54,7 @@ A REST API and dashboard that scan LLM prompts for injection attacks, decoding o
 ![Git](https://img.shields.io/badge/Git-0B1D3A?style=for-the-badge&logo=git&logoColor=F05032)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-0B1D3A?style=for-the-badge&logo=githubactions&logoColor=2088FF)
 
-![two-stage rocket launch to orbit](assets/rocket.svg)
+![rocket launch close-up with engine plume](assets/rocket.svg)
 
 ## Contribution graph
 
