@@ -1,6 +1,6 @@
 # Hi, I'm Shlok
 
-I build software for aerospace (CanSat flight software and ground stations), ML inference performance and LLM security, along with small tools for Linux and operations.
+I build software for rockets and small satellites. I write flight software and firmware for CanSat missions (attitude control, parafoil recovery and navigation, telemetry and failsafes) and ground station software for launch vehicle and CanSat programs.
 
 ## Tech stack
 
