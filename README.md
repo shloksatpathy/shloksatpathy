@@ -1,6 +1,8 @@
 # Hi, I'm Shlok
 
-I build software for rockets and small satellites. I write flight software and firmware for CanSat missions (attitude control, parafoil recovery and navigation, telemetry and failsafes) and ground station software for launch vehicle and CanSat programs.
+I work on amateur rocketry and student CanSat projects. I write flight software and firmware for CanSat payloads (attitude control, parafoil recovery and navigation, telemetry and failsafes) and ground station software for model rocket and CanSat launches.
+
+My interest is in real launch vehicles and spacecraft, and working on them is where I'm headed. These projects are how I'm building toward it.
 
 ![satellites orbiting Earth](assets/orbits.svg)
 
@@ -27,7 +29,7 @@ Flight computer firmware on the ESP32-S3: PID attitude control with control-mome
 ![OpenGL](https://img.shields.io/badge/OpenGL-0B1D3A?style=for-the-badge&logo=opengl&logoColor=8FB7D4)
 ![pyserial](https://img.shields.io/badge/pyserial-0B1D3A?style=for-the-badge)
 
-A real-time ground station for launch vehicle and CanSat missions: serial packet parsing, live telemetry plots, a GNSS ground-track map, derived telemetry, adaptive CSV logging, and packaged Linux and Windows builds.
+A real-time ground station for model rocket and CanSat launches: serial packet parsing, live telemetry plots, a GNSS ground-track map, derived telemetry, adaptive CSV logging, and packaged Linux and Windows builds.
 
 ### 🧠 ML inference
 
