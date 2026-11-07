@@ -56,7 +56,11 @@ A REST API and dashboard that scan LLM prompts for injection attacks, decoding o
 ![Git](https://img.shields.io/badge/Git-0B1D3A?style=for-the-badge&logo=git&logoColor=F05032)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-0B1D3A?style=for-the-badge&logo=githubactions&logoColor=2088FF)
 
-![rocket launch close-up with engine plume](assets/rocket.svg)
+<p align="center">
+  <img src="assets/apollo16-moon.jpg" alt="Apollo 16 astronaut John Young saluting the flag beside the lunar module and lunar rover" width="600">
+  <br>
+  <sub>Apollo 16, Descartes Highlands, April 1972. John Young salutes the flag mid-jump. Photo: Charles Duke / NASA</sub>
+</p>
 
 ## Contribution graph
 
