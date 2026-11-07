@@ -2,7 +2,7 @@
 
 I work on amateur rocketry and student CanSat projects. I write flight software and firmware for CanSat payloads (attitude control, parafoil recovery and navigation, telemetry and failsafes) and ground station software for model rocket and CanSat launches.
 
-My interest is in real launch vehicles and spacecraft, and working on them is where I'm headed. These projects are how I'm building toward it.
+My interests are launch vehicles, spacecraft, satellite systems and more, and I also aspire to work on satellite image processing. These projects are a few of the ways I'm building toward them.
 
 ![satellites orbiting Earth](assets/orbits.svg)
 
